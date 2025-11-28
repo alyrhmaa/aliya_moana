@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
-
 @section('content')
+
 
         <div class="py-4">
             <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
@@ -27,6 +27,7 @@
             </div>
         </div>
 
+
         <div class="row">
             <div class="col-12 mb-4">
                 <div class="card border-0 shadow components-section">
@@ -38,22 +39,25 @@
                                     <!-- First Name -->
                                     <div class="mb-3">
                                         <label for="first_name" class="form-label">First name</label>
-                                        <input type="text" name="first_name" id="first_name" class="form-control" required>
+                                        <input type="text" name ="first_name" class="form-control" required>
                                     </div>
+
 
                                     <!-- Last Name -->
                                     <div class="mb-3">
                                         <label for="last_name" class="form-label">Last name</label>
-                                        <input type="text" name="last_name" id="last_name" class="form-control" required>
+                                        <input type="text" name="last_name" class="form-control" required>
                                     </div>
                                 </div>
+
 
                                 <div class="col-lg-4 col-sm-6">
                                     <!-- Birthday -->
                                     <div class="mb-3">
                                         <label for="birthday" class="form-label">Birthday</label>
-                                        <input type="date" name="birthday" id="birthday" class="form-control">
+                                        <input type="date" name="birthday" class="form-control">
                                     </div>
+
 
                                     <!-- Gender -->
                                     <div class="mb-3">
@@ -67,6 +71,7 @@
                                     </div>
                                 </div>
 
+
                                 <div class="col-lg-4 col-sm-12">
                                     <!-- Email -->
                                     <div class="mb-3">
@@ -74,11 +79,13 @@
                                         <input type="text" name="email" id="email" class="form-control" required>
                                     </div>
 
+
                                     <!-- Phone -->
                                     <div class="mb-3">
                                         <label for="phone" class="form-label">Phone</label>
-                                        <input type="text" name="phone" id="phone" class="form-control">
+                                        <input type="text" name="phone" class="form-control">
                                     </div>
+
 
                                     <!-- Buttons -->
                                     <div class="">
@@ -90,7 +97,9 @@
                         </form>
                     </div>
 
+
                 </div>
             </div>
         </div>
+
 @endsection

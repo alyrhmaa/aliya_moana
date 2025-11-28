@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
+use App\Models\MultipleUpload;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PelangganController extends Controller
 {
@@ -15,9 +17,9 @@ class PelangganController extends Controller
         $searchableColumns = ['first_name', 'last_name', 'email', 'phone'];
 
         $data['dataPelanggan'] = Pelanggan::filter($request, $filterableColumns)
-        ->search($request, $searchableColumns)
-        ->simplePaginate(10)
-        ->onEachSide(2);
+            ->search($request, $searchableColumns)
+            ->Paginate(10)
+            ->onEachSide(2);
 
         return view('admin.pelanggan.index', $data);
     }
@@ -53,7 +55,9 @@ class PelangganController extends Controller
      */
     public function show(Pelanggan $pelanggan)
     {
-        //
+        $data['pelanggan'] = $pelanggan->load('files');
+
+        return view('admin.pelanggan.show', $data);
     }
 
     /**
@@ -61,8 +65,8 @@ class PelangganController extends Controller
      */
     public function edit(string $id)
     {
-        $data['dataPelanggan'] = Pelanggan::findOrFail($id);
-        return view('admin.pelanggan.edit', $data);
+        $pelanggan = Pelanggan::findOrFail($id);
+        return view('admin.pelanggan.edit', compact('pelanggan'));
     }
 
     /**
@@ -93,5 +97,59 @@ class PelangganController extends Controller
 
         $pelanggan->delete();
         return redirect()->route('pelanggan.index')->with('success', 'Data berhasil dihapus');
+    }
+    /**
+     * Upload multiple files for pelanggan
+     */
+    public function uploadFiles(Request $request, string $id)
+    {
+        $request->validate([
+            'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx,txt|max:2048',
+        ]);
+
+        $pelanggan     = Pelanggan::findOrFail($id);
+        $uploadedFiles = [];
+
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $filename = time() . '' . uniqid() . '' . $file->getClientOriginalName();
+                $file->storeAs('public/uploads', $filename);
+
+                $uploadedFile = MultipleUpload::create([
+                    'filename'      => $filename,
+                    'original_name' => $file->getClientOriginalName(),
+                    'ref_table'     => 'pelanggan',
+                    'ref_id'        => $pelanggan->pelanggan_id,
+                ]);
+
+                $uploadedFiles[] = $uploadedFile;
+            }
+        }
+
+        $fileCount = count($uploadedFiles);
+        return back()->with('success', "{$fileCount} file berhasil diupload!");
+    }
+
+    /**
+     * Delete specific file for pelanggan
+     */
+    public function deleteFile(string $id, string $fileId)
+    {
+        $pelanggan = Pelanggan::findOrFail($id);
+
+        $file = MultipleUpload::where('id', $fileId)
+            ->where('ref_table', 'pelanggan')
+            ->where('ref_id', $pelanggan->pelanggan_id)
+            ->firstOrFail();
+
+        $fileName = $file->original_name;
+
+        // Delete physical file
+        Storage::delete('public/uploads/' . $file->filename);
+
+        // Delete database record
+        $file->delete();
+
+        return back()->with('success', "File '{$fileName}' berhasil dihapus!");
     }
 }

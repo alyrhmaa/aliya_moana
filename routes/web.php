@@ -50,3 +50,8 @@ Route::get('dashboard', [DashboardController::class, 'index'])
 Route::resource('pelanggan', PelangganController::class);
 
 Route::resource('user', UserController::class);
+
+Route::post('pelanggan/{id}/upload-files', [PelangganController::class, 'uploadFiles'])
+     ->name('pelanggan.upload-files');
+Route::delete('pelanggan/{id}/delete-file/{fileId}', [PelangganController::class, 'deleteFile'])
+     ->name('pelanggan.delete-file');
